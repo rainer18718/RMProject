@@ -42,6 +42,7 @@ class AdminCrudTest extends TestCase
         $this->adminSession()
             ->get('/students')
             ->assertOk()
+            ->assertSee('action="/students"', false)
             ->assertSee('ana@example.com')
             ->assertDontSee('Loading students...');
 
@@ -64,6 +65,26 @@ class AdminCrudTest extends TestCase
             ->assertRedirect('/students');
 
         $this->assertDatabaseMissing('students', ['id' => $student->id]);
+    }
+
+    public function test_admin_can_create_student_without_manual_login_fields(): void
+    {
+        $degree = Degree::create(['degree_title' => 'BSIT']);
+
+        $this->adminSession()
+            ->post('/students', [
+                'student_id' => '045',
+                'first_name' => 'Rainer',
+                'last_name' => 'Pacheco',
+                'address' => 'Buenlag',
+                'contact_number' => '09458625745',
+                'email' => 'rainer@example.com',
+                'degree_id' => $degree->id,
+            ])
+            ->assertRedirect('/students');
+
+        $this->assertDatabaseHas('students', ['student_id' => '045', 'email' => 'rainer@example.com']);
+        $this->assertDatabaseHas('user_accounts', ['username' => '045', 'email' => 'rainer@example.com', 'role' => 'student']);
     }
 
     public function test_admin_can_manage_teacher_accounts(): void

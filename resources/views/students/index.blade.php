@@ -15,9 +15,10 @@
     <section class="ajax-card">
         <h2 id="formTitle">Add Student</h2>
 
-        <form id="studentForm" action="{{ route('students.store') }}" method="POST">
+        <form id="studentForm" action="{{ route('students.store', [], false) }}" method="POST">
             @csrf
             <input type="hidden" id="studentRecordId" name="id">
+            <input type="hidden" id="studentFormMethod" name="_method" value="" disabled>
 
             <div class="ajax-form-grid">
                 <div>
@@ -114,7 +115,7 @@
                             <td>{{ $student->email }}</td>
                             <td>
                                 <div class="actions">
-                                    <a class="btn btn-secondary" href="{{ route('students.show', $student) }}">
+                                    <a class="btn btn-secondary" href="{{ route('students.show', $student, false) }}">
                                         <i class="bi bi-eye"></i>View
                                     </a>
                                     <button type="button" class="btn btn-warning edit-student" data-id="{{ $student->id }}">
@@ -154,6 +155,8 @@
                 const recordId = document.getElementById('studentRecordId');
                 const search = document.getElementById('studentSearch');
                 const createOnlyFields = document.querySelectorAll('.create-only-field');
+                const storeUrl = '{{ route('students.store', [], false) }}';
+                const listUrl = '{{ route('students.ajax.index', [], false) }}';
                 let students = @js($students);
 
                 function showMessage(type, text) {
@@ -177,7 +180,9 @@
                 function resetForm() {
                     form.reset();
                     recordId.value = '';
-                    form.action = '{{ route('students.store') }}';
+                    document.getElementById('studentFormMethod').value = '';
+                    document.getElementById('studentFormMethod').disabled = true;
+                    form.action = storeUrl;
                     createOnlyFields.forEach((field) => field.style.display = '');
                     formTitle.textContent = 'Add Student';
                     saveButton.innerHTML = '<i class="bi bi-save"></i>Save Student';
@@ -207,7 +212,7 @@
                             <td>${escapeHtml(student.email)}</td>
                             <td>
                                 <div class="actions">
-                                    <a class="btn btn-secondary" href="/students/${student.id}">
+                                    <a class="btn btn-secondary" href="${storeUrl}/${student.id}">
                                         <i class="bi bi-eye"></i>View
                                     </a>
                                     <button type="button" class="btn btn-warning edit-student" data-id="${student.id}">
@@ -242,7 +247,7 @@
 
                 async function loadStudents() {
                     try {
-                        const response = await fetch('{{ route('students.ajax.index') }}', {
+                        const response = await fetch(listUrl, {
                             headers: {
                                 'Accept': 'application/json',
                                 'X-Requested-With': 'XMLHttpRequest',
@@ -270,11 +275,11 @@
                     const formData = new FormData(form);
 
                     if (id) {
-                        formData.append('_method', 'PUT');
+                        formData.set('_method', 'PUT');
                     }
 
                     try {
-                        const response = await fetch(id ? `/students/${id}` : '{{ route('students.store') }}', {
+                        const response = await fetch(id ? `${storeUrl}/${id}` : storeUrl, {
                             method: 'POST',
                             body: formData,
                             headers: {
@@ -296,7 +301,19 @@
                         resetForm();
                         await loadStudents();
                     } catch (error) {
-                        showMessage('error', 'Unable to save student. Please check your connection and try again.');
+                        showMessage('error', 'Ajax save failed. Submitting the form normally now...');
+
+                        if (recordId.value) {
+                            document.getElementById('studentFormMethod').value = 'PUT';
+                            document.getElementById('studentFormMethod').disabled = false;
+                            form.action = `${storeUrl}/${recordId.value}`;
+                        } else {
+                            document.getElementById('studentFormMethod').value = '';
+                            document.getElementById('studentFormMethod').disabled = true;
+                            form.action = storeUrl;
+                        }
+
+                        form.submit();
                     }
                 });
 
@@ -321,7 +338,9 @@
 
                         clearMessage();
                         recordId.value = student.id;
-                        form.action = `/students/${student.id}`;
+                        form.action = `${storeUrl}/${student.id}`;
+                        document.getElementById('studentFormMethod').value = 'PUT';
+                        document.getElementById('studentFormMethod').disabled = false;
                         document.getElementById('student_id').value = student.student_id || '';
                         document.getElementById('first_name').value = student.first_name || '';
                         document.getElementById('last_name').value = student.last_name || '';
@@ -351,7 +370,7 @@
                             formData.append('_method', 'DELETE');
                             formData.append('_token', csrf);
 
-                            const response = await fetch(`/students/${id}`, {
+                            const response = await fetch(`${storeUrl}/${id}`, {
                                 method: 'POST',
                                 body: formData,
                                 headers: {

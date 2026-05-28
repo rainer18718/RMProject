@@ -3725,14 +3725,14 @@
         <span class="nav-brand">RM</span>
 
         @if(session('user_role') === 'admin')
-            <a href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
+            <a href="{{ route('admin.dashboard', [], false) }}">Admin Dashboard</a>
             <a href="/degrees">Degrees</a>
             <a href="/students">Students</a>
-            <a href="{{ route('teachers.index') }}">Teachers</a>
+            <a href="{{ route('teachers.index', [], false) }}">Teachers</a>
         @elseif(session('user_role') === 'teacher')
-            <a href="{{ route('teacher.dashboard') }}">Teacher Dashboard</a>
+            <a href="{{ route('teacher.dashboard', [], false) }}">Teacher Dashboard</a>
         @elseif(session('user_role') === 'student')
-            <a href="{{ route('student.dashboard') }}">Student Dashboard</a>
+            <a href="{{ route('student.dashboard', [], false) }}">Student Dashboard</a>
         @endif
 
         @if(session('user_account_id'))

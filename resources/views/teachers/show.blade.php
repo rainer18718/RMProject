@@ -16,6 +16,6 @@
 
     <br>
 
-    <a href="{{ route('teachers.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Back</a>
-    <a href="{{ route('teachers.edit', $teacher) }}" class="btn btn-warning"><i class="bi bi-pencil-square"></i>Edit</a>
+    <a href="{{ route('teachers.index', [], false) }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Back</a>
+    <a href="{{ route('teachers.edit', $teacher, false) }}" class="btn btn-warning"><i class="bi bi-pencil-square"></i>Edit</a>
 @endsection

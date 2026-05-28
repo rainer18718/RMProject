@@ -10,7 +10,7 @@
             <p>Create a secure teacher account with active role access.</p>
         </div>
 
-        <a href="{{ route('teachers.index') }}" class="hero-link">
+        <a href="{{ route('teachers.index', [], false) }}" class="hero-link">
             <i class="bi bi-arrow-left"></i>
             Back to Teachers
         </a>
@@ -34,7 +34,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('teachers.store') }}" method="POST" class="modern-form">
+            <form action="{{ route('teachers.store', [], false) }}" method="POST" class="modern-form">
                 @csrf
 
                 <div class="form-grid single-row">
@@ -65,7 +65,7 @@
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-check2"></i>Save Teacher</button>
-                    <a href="{{ route('teachers.index') }}" class="btn btn-secondary"><i class="bi bi-x"></i>Cancel</a>
+                    <a href="{{ route('teachers.index', [], false) }}" class="btn btn-secondary"><i class="bi bi-x"></i>Cancel</a>
                 </div>
             </form>
         </section>

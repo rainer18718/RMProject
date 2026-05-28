@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class StudentController extends Controller
 {
@@ -55,15 +56,20 @@ class StudentController extends Controller
             'contact_number' => 'required|digits:11',
             'email' => 'required|email|unique:students,email|unique:user_accounts,email',
             'degree_id' => 'required|exists:degrees,id',
-            'username' =>'required|unique:user_accounts,username',
-            'password'=>'required|min:8',
+            'username' => 'nullable|unique:user_accounts,username',
+            'password' => 'nullable|min:8',
         ]);
 
         DB::transaction(function () use ($request) {
+            $username = $request->filled('username')
+                ? $request->input('username')
+                : $this->uniqueUsername($request);
+            $password = $request->filled('password') ? $request->input('password') : 'student123';
+
             $user = UserAccount::create([
-                'username' => $request->input('username'),
+                'username' => $username,
                 'email' => $request->input('email'),
-                'password' => Hash::make($request->input('password')),
+                'password' => Hash::make($password),
                 'role' => 'student',
                 'is_active' => 1,
             ]);
@@ -178,5 +184,26 @@ class StudentController extends Controller
         }
 
         return redirect('students')->with('success', 'Student deleted successfully.');
+    }
+
+    private function uniqueUsername(Request $request): string
+    {
+        $base = Str::slug(
+            $request->input('student_id')
+                ?: Str::before($request->input('email'), '@')
+                ?: $request->input('first_name') . ' ' . $request->input('last_name'),
+            '.'
+        );
+
+        $base = $base !== '' ? $base : 'student';
+        $username = $base;
+        $count = 1;
+
+        while (UserAccount::where('username', $username)->exists()) {
+            $username = $base . '.' . $count;
+            $count++;
+        }
+
+        return $username;
     }
 }

@@ -265,7 +265,7 @@
                         <i class="bi bi-person-plus-fill"></i>
                         <div><strong>Add Student</strong><span>Create student record and login access.</span></div>
                     </a>
-                    <a class="admin-action-new" href="{{ route('teachers.create') }}">
+                    <a class="admin-action-new" href="{{ route('teachers.create', [], false) }}">
                         <i class="bi bi-person-fill-add"></i>
                         <div><strong>Add Teacher</strong><span>Create a teacher account.</span></div>
                     </a>
@@ -273,7 +273,7 @@
                         <i class="bi bi-table"></i>
                         <div><strong>Student List</strong><span>Review, update, and manage student data.</span></div>
                     </a>
-                    <a class="admin-action-new" href="{{ route('teachers.index') }}">
+                    <a class="admin-action-new" href="{{ route('teachers.index', [], false) }}">
                         <i class="bi bi-journal-bookmark-fill"></i>
                         <div><strong>Teacher List</strong><span>View all teacher accounts.</span></div>
                     </a>

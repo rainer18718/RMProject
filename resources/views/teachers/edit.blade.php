@@ -15,7 +15,7 @@
         </div>
     @endif
 
-    <form action="{{ route('teachers.update', $teacher) }}" method="POST">
+    <form action="{{ route('teachers.update', $teacher, false) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -35,6 +35,6 @@
         </label>
 
         <button type="submit" class="btn btn-primary"><i class="bi bi-check2"></i>Update Teacher</button>
-        <a href="{{ route('teachers.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Back</a>
+        <a href="{{ route('teachers.index', [], false) }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Back</a>
     </form>
 @endsection
