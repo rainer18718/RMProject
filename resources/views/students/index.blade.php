@@ -85,6 +85,9 @@
     <section class="ajax-card">
         <h2>Student Records</h2>
 
+        <label for="studentSearch">Search</label>
+        <input type="search" id="studentSearch" placeholder="Search student name, ID, email, or degree">
+
         <div class="ajax-table-wrap">
             <table>
                 <thead>

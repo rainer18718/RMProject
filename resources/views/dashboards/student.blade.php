@@ -183,6 +183,13 @@
             font-weight: 850;
         }
 
+        .student-export-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
         @media (max-width: 900px) {
             .student-hero-new,
             .student-main-new,
@@ -239,6 +246,11 @@
                         <p>No student profile is linked to this account yet.</p>
                     </div>
                 @endif
+
+                <div class="student-export-actions">
+                    <a class="btn btn-primary" href="{{ route('dashboards.export.pdf', 'student') }}" target="_blank"><i class="bi bi-file-earmark-pdf"></i>Generate PDF</a>
+                    <a class="btn btn-success" href="{{ route('dashboards.export.excel', 'student') }}"><i class="bi bi-file-earmark-spreadsheet"></i>Export to Excel</a>
+                </div>
             </section>
 
             <aside class="student-side-new">

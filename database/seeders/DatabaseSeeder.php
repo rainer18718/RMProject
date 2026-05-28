@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(DefaultAdminSeeder::class);
+
         DB::table('users')->updateOrInsert(
             ['id' => 1],
             [
@@ -52,18 +54,6 @@ class DatabaseSeeder extends Seeder
             ['id' => 1],
             [
                 'degree_title' => 'Bachelor of Science in Computer Science',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
-
-        DB::table('user_accounts')->updateOrInsert(
-            ['username' => 'admin'],
-            [
-                'email' => 'admin@example.com',
-                'password' => Hash::make('password123'),
-                'role' => 'admin',
-                'is_active' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

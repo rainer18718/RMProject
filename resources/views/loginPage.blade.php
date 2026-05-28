@@ -291,10 +291,10 @@
                 @csrf
 
                 <div>
-                    <label for="username">Username</label>
+                    <label for="username">Username or Email</label>
                     <div class="field">
                         <i class="bi bi-person-fill"></i>
-                        <input id="username" type="text" name="username" value="{{ old('username') }}" placeholder="Enter username" autocomplete="username" required>
+                        <input id="username" type="text" name="username" value="{{ old('username') }}" placeholder="Enter username or email" autocomplete="username" required>
                     </div>
                 </div>
 

@@ -12,8 +12,10 @@ $(function () {
     const $formTitle = $('#formTitle');
     const $saveButton = $('#saveStudentBtn');
     const $recordId = $('#studentRecordId');
+    const $search = $('#studentSearch');
     const syncKey = 'students-table-updated-at';
     let lastSyncValue = null;
+    let students = [];
 
     $.ajaxSetup({
         headers: {
@@ -67,6 +69,9 @@ $(function () {
                 <td>${student.email || ''}</td>
                 <td>
                     <div class="actions">
+                        <a class="btn btn-secondary" href="/students/${student.id}">
+                            <i class="bi bi-eye"></i>View
+                        </a>
                         <button type="button" class="btn btn-warning edit-student" data-student="${encodedStudent}">
                             <i class="bi bi-pencil-square"></i>Edit
                         </button>
@@ -79,17 +84,37 @@ $(function () {
         `;
     }
 
+    function renderStudents() {
+        const term = ($search.val() || '').toString().toLowerCase().trim();
+        const visibleStudents = term
+            ? students.filter(function (student) {
+                const degree = student.degree ? student.degree.degree_title : '';
+                return [
+                    student.student_id,
+                    student.first_name,
+                    student.last_name,
+                    student.email,
+                    student.contact_number,
+                    degree,
+                ].join(' ').toLowerCase().includes(term);
+            })
+            : students;
+
+        if (!visibleStudents.length) {
+            $tableBody.html('<tr><td colspan="8" class="loading-row">No student records found.</td></tr>');
+            return;
+        }
+
+        $tableBody.html(visibleStudents.map(studentRow).join(''));
+    }
+
     function loadStudents() {
         $tableBody.html('<tr><td colspan="8" class="loading-row">Loading students...</td></tr>');
 
         $.get('/students/ajax/list')
             .done(function (response) {
-                if (!response.students.length) {
-                    $tableBody.html('<tr><td colspan="8" class="loading-row">No student records found.</td></tr>');
-                    return;
-                }
-
-                $tableBody.html(response.students.map(studentRow).join(''));
+                students = response.students || [];
+                renderStudents();
             })
             .fail(function () {
                 $tableBody.html('<tr><td colspan="8" class="loading-row">Unable to load students.</td></tr>');
@@ -128,6 +153,8 @@ $(function () {
         clearMessage();
         resetForm();
     });
+
+    $search.on('input', renderStudents);
 
     $tableBody.on('click', '.edit-student', function () {
         const student = JSON.parse(decodeURIComponent($(this).attr('data-student')));

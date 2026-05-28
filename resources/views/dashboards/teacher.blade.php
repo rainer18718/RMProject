@@ -166,6 +166,13 @@
             margin: 0;
         }
 
+        .teacher-export-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
         @media (max-width: 900px) {
             .teacher-hero-new,
             .teacher-main-new,
@@ -215,6 +222,11 @@
                         <span>Protection</span>
                         <strong>Enabled</strong>
                     </div>
+                </div>
+
+                <div class="teacher-export-actions">
+                    <a class="btn btn-primary" href="{{ route('dashboards.export.pdf', 'teacher') }}" target="_blank"><i class="bi bi-file-earmark-pdf"></i>Generate PDF</a>
+                    <a class="btn btn-success" href="{{ route('dashboards.export.excel', 'teacher') }}"><i class="bi bi-file-earmark-spreadsheet"></i>Export to Excel</a>
                 </div>
             </section>
 

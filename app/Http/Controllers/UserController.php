@@ -76,7 +76,9 @@ class UserController extends Controller
         ]);
 
         try {
-            $user = UserAccount::where('username', $credentials['username'])->first();
+            $user = UserAccount::where('username', $credentials['username'])
+                ->orWhere('email', $credentials['username'])
+                ->first();
         } catch (QueryException $e) {
             return back()
                 ->withInput($request->except('password'))

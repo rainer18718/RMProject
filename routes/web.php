@@ -7,6 +7,7 @@ use App\Http\Controllers\PagesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\DashboardExportController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -31,9 +32,12 @@ Route::middleware('auth.session')->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
         Route::get('/students/ajax/list', [StudentController::class, 'ajaxIndex'])->name('students.ajax.index');
         Route::resource('degrees', DegreeController::class);
-        Route::resource('students', StudentController::class)->middleware('maintenance');
-        Route::resource('teachers', TeacherController::class)->only(['index', 'create', 'store']);
+        Route::resource('students', StudentController::class);
+        Route::resource('teachers', TeacherController::class);
     });
+
+    Route::get('/dashboards/{dashboard}/export/pdf', [DashboardExportController::class, 'pdf'])->name('dashboards.export.pdf');
+    Route::get('/dashboards/{dashboard}/export/excel', [DashboardExportController::class, 'excel'])->name('dashboards.export.excel');
 });
 
 Route::middleware('groupMiddleware')->group(function () {

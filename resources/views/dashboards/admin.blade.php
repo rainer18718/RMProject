@@ -152,6 +152,13 @@
             gap: 12px;
         }
 
+        .export-actions-new {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
         .admin-action-new {
             display: grid;
             grid-template-columns: 48px minmax(0, 1fr);
@@ -270,6 +277,11 @@
                         <i class="bi bi-journal-bookmark-fill"></i>
                         <div><strong>Teacher List</strong><span>View all teacher accounts.</span></div>
                     </a>
+                </div>
+
+                <div class="export-actions-new">
+                    <a class="btn btn-primary" href="{{ route('dashboards.export.pdf', 'admin') }}" target="_blank"><i class="bi bi-file-earmark-pdf"></i>Generate PDF</a>
+                    <a class="btn btn-success" href="{{ route('dashboards.export.excel', 'admin') }}"><i class="bi bi-file-earmark-spreadsheet"></i>Export to Excel</a>
                 </div>
             </section>
 

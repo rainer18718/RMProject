@@ -21,7 +21,7 @@ class StudentController extends Controller
 
     public function ajaxIndex()
     {
-        $students = Student::with('degree')->latest()->get();
+        $students = Student::with(['degree', 'userAccount'])->latest()->get();
 
         return response()->json([
             'students' => $students,
@@ -46,7 +46,7 @@ class StudentController extends Controller
         //     'degree_id' => 'required|exists:degrees,id',
         // ]);
 
-        $validated = $request->validate([
+        $request->validate([
             // 'student_id' => 'required',
             'first_name' => 'required|min:2',
             'last_name' => 'required|min:2',
@@ -58,17 +58,16 @@ class StudentController extends Controller
             'password'=>'required|min:8',
         ]);
 
-        $student = null;
-
         DB::transaction(function () use ($request) {
             $user = UserAccount::create([
                 'username' => $request->input('username'),
                 'email' => $request->input('email'),
                 'password' => Hash::make($request->input('password')),
                 'role' => 'student',
+                'is_active' => 1,
             ]);
 
-            $student = Student::create([
+            Student::create([
                 'user_account_id' => $user->id,
                 'student_id' => $request->student_id,
                 'first_name' => $request->first_name,
@@ -121,19 +120,32 @@ class StudentController extends Controller
             'last_name' => 'required|min:2',
             'address' => 'required',
             'contact_number' => 'required|digits:11',
-            'email' => 'required|email|unique:students,email,' . $student->id,
+            'email' => [
+                'required',
+                'email',
+                'unique:students,email,' . $student->id,
+                'unique:user_accounts,email,' . $student->user_account_id,
+            ],
             'degree_id' => 'required|exists:degrees,id',
         ]);
 
-        $student->update([
-            'student_id' => $request->student_id,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'address' => $request->address,
-            'contact_number' => $request->contact_number,
-            'email' => $request->email,
-            'degree_id' => $request->degree_id,
-        ]);
+        DB::transaction(function () use ($request, $student) {
+            $student->update([
+                'student_id' => $request->student_id,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'address' => $request->address,
+                'contact_number' => $request->contact_number,
+                'email' => $request->email,
+                'degree_id' => $request->degree_id,
+            ]);
+
+            if ($student->userAccount) {
+                $student->userAccount->update([
+                    'email' => $request->email,
+                ]);
+            }
+        });
         
         $msg = "Student is Updated!";
         Log::info($msg);
@@ -149,7 +161,14 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
-        $student->delete();
+        DB::transaction(function () use ($student) {
+            $userAccount = $student->userAccount;
+            $student->delete();
+
+            if ($userAccount && $userAccount->role === 'student') {
+                $userAccount->delete();
+            }
+        });
 
         if (request()->ajax()) {
             return response()->json([
