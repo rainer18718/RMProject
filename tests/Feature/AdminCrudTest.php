@@ -40,6 +40,12 @@ class AdminCrudTest extends TestCase
             ->assertJsonPath('students.0.email', 'ana@example.com');
 
         $this->adminSession()
+            ->get('/students')
+            ->assertOk()
+            ->assertSee('ana@example.com')
+            ->assertDontSee('Loading students...');
+
+        $this->adminSession()
             ->put('/students/' . $student->id, [
                 'student_id' => 'S-101',
                 'first_name' => 'Ana',

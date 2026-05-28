@@ -15,8 +15,9 @@ class StudentController extends Controller
     public function index()
     {
         $degrees = Degree::all();
+        $students = Student::with(['degree', 'userAccount'])->latest()->get();
 
-        return view('students.index', compact('degrees'));
+        return view('students.index', compact('degrees', 'students'));
     }
 
     public function ajaxIndex()
